@@ -39,6 +39,7 @@ void registrarLibros(struct Libro libros[NUM_LIBROS], int i)
     int len = 0;
     printf("Ingrese el id del libro %d:\t", i + 1);
     scanf("%d", libros[i].id);
+    //
 
     printf("Ingrese el nombre del libro %d:\t", i + 1);
     fgets(libros[i].titulo, NUM_CARACTERES_TITULO, stdin);
