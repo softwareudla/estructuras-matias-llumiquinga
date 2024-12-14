@@ -19,27 +19,37 @@ int menu(struct Libro libros[NUM_LIBROS], int i, int opc)
         imprimirSeparadores();
         mostrarLibros(libros, i);
         break;
-    /*case 3:
-        int id;
-        printf("Ingrese el id del libro a buscar: ");
-        scanf("%d", &id);
-        buscarLibroId(libros, id);
-        break;
-    case 4:
-        char titulo[100];
-        printf("Ingrese el titulo del libro a buscar: ");
-        scanf("%s", titulo);
-        buscarLibroTitulo(libros, titulo);
-        break;*/
+        /*case 3:
+            int id;
+            printf("Ingrese el id del libro a buscar: ");
+            scanf("%d", &id);
+            buscarLibroId(libros, id);
+            break;
+        case 4:
+            char titulo[100];
+            printf("Ingrese el titulo del libro a buscar: ");
+            scanf("%s", titulo);
+            buscarLibroTitulo(libros, titulo);
+            break;*/
     }
 }
 
 void registrarLibros(struct Libro libros[NUM_LIBROS], int i)
 {
-    int len = 0;
-    printf("Ingrese el id del libro %d:\t", i + 1);
-    scanf("%d", libros[i].id);
-    //
+    int len = 0, numI = 0;
+    float numF = 0;
+    do
+    {
+        printf("Ingrese el id del libro %d:\t", i + 1);
+        scanf("%f", &numF);
+        numI = (int)numF;
+        if (numI != numF || numF > 20 || numF <= 0)
+        {
+            printf("Numero invalido\n");
+        }
+    } while (numI != numF || numF > 20 || numF <= 0);
+
+    libros[i].id = numI;
 
     printf("Ingrese el nombre del libro %d:\t", i + 1);
     fgets(libros[i].titulo, NUM_CARACTERES_TITULO, stdin);
@@ -54,7 +64,7 @@ void registrarLibros(struct Libro libros[NUM_LIBROS], int i)
     libros[i].autor[len] = '\0';
 
     printf("Ingrese el anio del libro %d:\t", i + 1);
-    scanf("%d", libros[i].anio);
+    scanf("%d", &libros[i].anio);
 
     strcpy(libros[i].estado, "Disponible");
 }
@@ -64,7 +74,7 @@ void mostrarLibros(struct Libro libros[NUM_LIBROS], int n)
     printf("%-4s%-100s%-50s%-5s%-20s\n", "ID", "TITULO", "AUTOR", "ANIO", "ESTADO");
     for (int i = 0; i < n; i++)
     {
-        printf("%-4d%-100s%-50s%-5d%-20s\n", libros[i].id,libros[i].titulo, libros[i].autor, libros[i].anio, libros[i].estado);
+        printf("%-4d%-100s%-50s%-5d%-20s\n", libros[i].id, libros[i].titulo, libros[i].autor, libros[i].anio, libros[i].estado);
     }
 }
 
@@ -74,6 +84,6 @@ void imprimirSeparadores()
     {
         printf("-");
     }
-    
+
     printf("\n");
 }
