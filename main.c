@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     int i = 0;
     do
     {
-        opc = menu(libros, i, opc);
+        opc = menu(libros, &i, opc);
         
         
     } while (opc != 7);
