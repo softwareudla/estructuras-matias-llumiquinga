@@ -2,6 +2,184 @@
 #include <string.h>
 #include "funciones.h"
 
+int menu(struct Libro libros[NUM_LIBROS], int *i, int opc)
+{
+    ingresarEntero(&opc, 1, 1, *i);
+
+    switch (opc)
+    {
+    case 1:
+        imprimirSeparadores();
+
+        if (*i >= NUM_LIBROS)
+        {
+            *i = NUM_LIBROS;
+            imprimirMensaje(27, 0);
+        }
+        else
+        {
+            registrarLibros(libros, *i);
+            *i = *i + 1;
+        }
+
+        break;
+    case 2:
+        imprimirSeparadores();
+        mostrarLibros(libros, *i);
+        break;
+    case 3:
+        imprimirSeparadores();
+        buscarLibroId(libros, *i);
+        break;
+    case 4:
+        imprimirSeparadores();
+        buscarLibroTitulo(libros, *i);
+        break;
+    case 5:
+        imprimirSeparadores();
+        actualizarEstadoLibro(libros, *i);
+        break;
+    case 6:
+        imprimirSeparadores();
+        eliminarLibro(libros, i);
+        break;
+    }
+
+    return opc;
+}
+
+void registrarLibros(struct Libro libros[NUM_LIBROS], int i)
+{
+    int len = 0, existencia = 0;
+
+    do
+    {
+        ingresarEntero(&libros[i].id, 2, 2, i);
+        existencia = verificarExistencia(libros, i, 1);
+        if (existencia >= 1)
+        {
+            imprimirMensaje(24, 0);
+        }
+    } while (existencia >= 1);
+
+    ingresarCadena(libros[i].titulo, NUM_CARACTERES_TITULO, 4, i);
+    ingresarCadena(libros[i].autor, NUM_CARACTERES_AUTOR, 5, i);
+    ingresarEntero(&libros[i].anio, 3, 3, i);
+
+    strcpy(libros[i].estado, "Disponible");
+}
+
+void mostrarLibros(struct Libro libros[NUM_LIBROS], int n)
+{
+    printf("%-4s%-100s%-50s%-6s%-11s\n", "ID", "TITULO", "AUTOR", "ANIO", "ESTADO");
+    for (int i = 0; i < n; i++)
+    {
+        printf("%-4d%-100s%-50s%-6d%-11s\n", libros[i].id, libros[i].titulo, libros[i].autor, libros[i].anio, libros[i].estado);
+    }
+}
+
+void buscarLibroId(struct Libro libros[NUM_LIBROS], int n)
+{
+    int id = 0, acumExistencia = 0;
+    struct Libro libroEncontrado[20] = {0};
+
+    ingresarEntero(&id, 2, 6, n);
+
+    for (int i = 0; i < n; i++)
+    {
+        if (id == libros[i].id)
+        {
+            libroEncontrado[acumExistencia] = libros[i];
+            acumExistencia++;
+        }
+    }
+
+    imprimirResultadosBusqueda(libroEncontrado, acumExistencia);
+}
+void buscarLibroTitulo(struct Libro libros[NUM_LIBROS], int n)
+{
+    char tituloBuscado[NUM_CARACTERES_TITULO] = {0};
+    int acumExistencia = 0;
+    struct Libro libroEncontrado[20] = {0};
+
+    ingresarCadena(tituloBuscado, NUM_CARACTERES_TITULO, 7, n);
+
+    for (int i = 0; i < n; i++)
+    {
+        if (strcmp(tituloBuscado, libros[i].titulo) == 0)
+        {
+            libroEncontrado[acumExistencia] = libros[i];
+            acumExistencia++;
+        }
+    }
+
+    imprimirResultadosBusqueda(libroEncontrado, acumExistencia);
+}
+
+void actualizarEstadoLibro(struct Libro libros[NUM_LIBROS], int n)
+{
+    int id = 0, acumExistencia = 0;
+    struct Libro libroEncontrado[20] = {0};
+
+    ingresarEntero(&id, 2, 8, n);
+
+    for (int i = 0; i < n; i++)
+    {
+        if (id == libros[i].id)
+        {
+            if (strcmp(libros[i].estado, "Disponible") == 0)
+            {
+                strcpy(libros[i].estado, "Prestado");
+            }
+            else if (strcmp(libros[i].estado, "Prestado") == 0)
+            {
+                strcpy(libros[i].estado, "Disponible");
+            }
+            imprimirMensaje(25, 0);
+            libroEncontrado[acumExistencia] = libros[i];
+            acumExistencia++;
+        }
+    }
+    imprimirResultadosBusqueda(libroEncontrado, acumExistencia);
+}
+
+void eliminarLibro(struct Libro libros[NUM_LIBROS], int *n)
+{
+    int id = 0, elimninado = 0;
+    struct Libro libroCero = {0};
+
+    ingresarEntero(&id, 2, 9, *n);
+
+    for (int i = 0; i < *n; i++)
+    {
+        if (id == libros[i].id)
+        {
+            for (int j = i; j < *n; j++)
+            {
+                if (j == NUM_LIBROS - 1)
+                {
+                    libros[j] = libroCero;
+                    elimninado = 1;
+                }
+                else
+                {
+                    libros[j] = libros[j + 1];
+                    elimninado = 1;
+                }
+            }
+        }
+    }
+    if (elimninado == 0)
+    {
+        imprimirMensaje(23., 0);
+    }
+    else
+    {
+        imprimirMensaje(26, 0);
+        *n = *n - 1;
+    }
+}
+
 void imprimirMensaje(int numMensaje, int i)
 {
     switch (numMensaje)
@@ -29,6 +207,36 @@ void imprimirMensaje(int numMensaje, int i)
         break;
     case 6:
         printf("Ingrese la id del libro a buscar:\t");
+        break;
+    case 7:
+        printf("Ingrese el titulo del libro a buscar:\t");
+        break;
+    case 8:
+        printf("Ingrese la id del libro a actualizar su estado:\t");
+        break;
+    case 9:
+        printf("Ingrese la id del libro a eliminar:\t");
+        break;
+    case 21:
+        printf("-NUMERO INVALIDO-\n");
+        break;
+    case 22:
+        printf("-NUMERO MAX DE CARACTERES EXCEDIDO-\n");
+        break;
+    case 23:
+        printf("-NO SE ENCONTRARON RESULTADOS-\n");
+        break;
+    case 24:
+        printf("-LA ID INGRESADA YA EXISTE-\n");
+        break;
+    case 25:
+        printf("-ESTADO ACTUALIZADO-\n");
+        break;
+    case 26:
+        printf("-SE HA ELIMINADO UN LIBRO-\n");
+        break;
+    case 27:
+        printf("-YA SE HAN REGISTRADO EL MAX DE %d LIBROS-\n", NUM_LIBROS);
         break;
 
     default:
@@ -71,7 +279,7 @@ void validarEntero(int *continuar, int *numAValidar, int opcEntero)
 
     if (*continuar == 0)
     {
-        printf("-NUMERO INVALIDO-\n");
+        imprimirMensaje(21, 0);
     }
 }
 
@@ -138,7 +346,7 @@ void validarNumCaracteres(int *continuar, char cadenaAValidar[], int numCaracter
 
     if (cadenaAValidar[len] != '\n')
     {
-        printf("-NUMERO MAX DE CARACTERES EXCEDIDO-\n");
+        imprimirMensaje(22, 0);
         while (getchar() != '\n')
             ;
         *continuar = 0;
@@ -150,86 +358,12 @@ void validarNumCaracteres(int *continuar, char cadenaAValidar[], int numCaracter
     }
 }
 
-int menu(struct Libro libros[NUM_LIBROS], int *i, int opc)
-{
-    ingresarEntero(&opc, 1, 1, *i);
-
-    switch (opc)
-    {
-    case 1:
-        imprimirSeparadores();
-        registrarLibros(libros, *i);
-        *i = *i + 1;
-        break;
-    case 2:
-        imprimirSeparadores();
-        mostrarLibros(libros, *i);
-        break;
-    case 3:
-        int id;
-        imprimirSeparadores();
-        ingresarEntero(&id, 2, 6, *i);
-        buscarLibroId(libros, id);
-        break;
-        /*case 4:
-            char titulo[100];
-            printf("Ingrese el titulo del libro a buscar: ");
-            scanf("%s", titulo);
-            buscarLibroTitulo(libros, titulo);
-            break;*/
-    }
-
-    return opc;
-}
-
-void registrarLibros(struct Libro libros[NUM_LIBROS], int i)
-{
-    int len = 0, existencia = 0;
-
-    do
-    {
-        ingresarEntero(&libros[i].id, 2, 2, i);
-        existencia = verificarExistencia(libros, i, 1);
-        if (existencia > 1)
-        {
-            printf("-LA ID INGRESADO YA EXISTE-\n");
-        }
-    } while (existencia > 1);
-
-    ingresarCadena(libros[i].titulo, NUM_CARACTERES_TITULO, 4, i);
-    ingresarCadena(libros[i].autor, NUM_CARACTERES_AUTOR, 5, i);
-    ingresarEntero(&libros[i].anio, 3, 3, i);
-
-    strcpy(libros[i].estado, "Disponible");
-}
-
-
-
-void mostrarLibros(struct Libro libros[NUM_LIBROS], int n)
-{
-    printf("%-4s%-100s%-50s%-6s%-11s\n", "ID", "TITULO", "AUTOR", "ANIO", "ESTADO");
-    for (int i = 0; i < n; i++)
-    {
-        printf("%-4d%-100s%-50s%-6d%-11s\n", libros[i].id, libros[i].titulo, libros[i].autor, libros[i].anio, libros[i].estado);
-    }
-}
-
-void buscarLibroId(struct Libro libros[NUM_LIBROS], int id)
-{
-    int existencia = verificarExistencia(libros, id, 3);
-    if (existencia==0)
-    {
-        printf("-NO SE ENCONTRARON RESULTADOS-\n");
-    }    
-}
-
 int verificarExistencia(struct Libro libros[NUM_LIBROS], int n, int numInfo)
 {
-    int acumExistencia = 0, buscado=0;
-    struct Libro libroEncontrado[20]={0};
+    int acumExistencia = 0, buscado = 0;
+    struct Libro libroEncontrado[20] = {0};
 
-
-    for (int i = 0; i < n + 1; i++)
+    for (int i = 0; i < n; i++)
     {
         switch (numInfo)
         {
@@ -245,47 +379,24 @@ int verificarExistencia(struct Libro libros[NUM_LIBROS], int n, int numInfo)
                 acumExistencia++;
             }
             break;
-        case 3:
-                //printf("n=%d\ni=%d\nid copiado: %d\tid original: %d\n",n,i, libroEncontrado[0].id, libros[i].id);
-
-            if (n == libros[i].id)
-            {
-                libroEncontrado[acumExistencia].id=libros[i].id;
-                strcpy(libroEncontrado[acumExistencia].titulo, libros[i].titulo);
-                strcpy(libroEncontrado[acumExistencia].autor, libros[i].autor);
-                libroEncontrado[acumExistencia].anio=libros[i].anio;
-                strcpy(libroEncontrado[acumExistencia].estado, libros[i].estado);
-
-                //printf("n=%d\ni=%d\nid copiado: %d\tid original: %d\n",n,i, libroEncontrado[0].id, libros[i].id);
-                acumExistencia++;
-                buscado=1;
-            }
-            break;
-        case 4:
-            if (strcmp(libros[n].titulo, libros[i].titulo) == 0)
-            {
-                libroEncontrado[acumExistencia].id=libros[i].id;
-                strcpy(libroEncontrado[acumExistencia].titulo, libros[i].titulo);
-                strcpy(libroEncontrado[acumExistencia].autor, libros[i].autor);
-                libroEncontrado[acumExistencia].anio=libros[i].anio;
-                strcpy(libroEncontrado[acumExistencia].estado, libros[i].estado);
-                acumExistencia++;
-                buscado=1;
-            }
-            break;
-
         default:
             break;
         }
     }
-    //printf("\texistencia= %d\n", acumExistencia);
-    
-    if (acumExistencia>0 && buscado==1)
+
+    return acumExistencia;
+}
+
+void imprimirResultadosBusqueda(struct Libro libroEncontrado[20], int acumExistencia)
+{
+    if (acumExistencia > 0)
     {
         mostrarLibros(libroEncontrado, acumExistencia);
     }
-    
-    return acumExistencia;
+    else
+    {
+        imprimirMensaje(23, 0);
+    }
 }
 
 void imprimirSeparadores()
