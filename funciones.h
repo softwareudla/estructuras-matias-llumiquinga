@@ -33,6 +33,9 @@ int menu(struct Libro libros[NUM_LIBROS], int *i, int opc);
 void registrarLibros(struct Libro libros[NUM_LIBROS], int i);
 void mostrarLibros(struct Libro libros[NUM_LIBROS], int n);
 
+int verificarExistencia(struct Libro libros[NUM_LIBROS], int n, int numInfo);
+
+
 
 void imprimirSeparadores();
 
