@@ -32,6 +32,9 @@ void validarNumCaracteres(int *continuar, char cadenaAValidar[], int numCaracter
 int menu(struct Libro libros[NUM_LIBROS], int *i, int opc);
 void registrarLibros(struct Libro libros[NUM_LIBROS], int i);
 void mostrarLibros(struct Libro libros[NUM_LIBROS], int n);
+void buscarLibroId(struct Libro libros[NUM_LIBROS], int id);
+
+
 
 int verificarExistencia(struct Libro libros[NUM_LIBROS], int n, int numInfo);
 

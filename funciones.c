@@ -19,13 +19,16 @@ void imprimirMensaje(int numMensaje, int i)
         printf("Ingrese la id del libro %d:\t", i + 1);
         break;
     case 3:
-        printf("Ingrese el anio del libro %d:\t\t", i + 1);
+        printf("Ingrese el anio del libro %d:\t", i + 1);
         break;
     case 4:
-        printf("Ingrese el titulo del libro %d:\t\t", i + 1);
+        printf("Ingrese el titulo del libro %d:\t", i + 1);
         break;
     case 5:
-        printf("Ingrese el autor del libro %d:\t\t", i + 1);
+        printf("Ingrese el autor del libro %d:\t", i + 1);
+        break;
+    case 6:
+        printf("Ingrese la id del libro a buscar:\t");
         break;
 
     default:
@@ -157,19 +160,18 @@ int menu(struct Libro libros[NUM_LIBROS], int *i, int opc)
         imprimirSeparadores();
         registrarLibros(libros, *i);
         *i = *i + 1;
-        printf("\t%d\n", *i);
         break;
     case 2:
         imprimirSeparadores();
         mostrarLibros(libros, *i);
         break;
-        /*case 3:
-            int id;
-            printf("Ingrese el id del libro a buscar: ");
-            scanf("%d", &id);
-            buscarLibroId(libros, id);
-            break;
-        case 4:
+    case 3:
+        int id;
+        imprimirSeparadores();
+        ingresarEntero(&id, 2, 6, *i);
+        buscarLibroId(libros, id);
+        break;
+        /*case 4:
             char titulo[100];
             printf("Ingrese el titulo del libro a buscar: ");
             scanf("%s", titulo);
@@ -197,14 +199,35 @@ void registrarLibros(struct Libro libros[NUM_LIBROS], int i)
     ingresarCadena(libros[i].titulo, NUM_CARACTERES_TITULO, 4, i);
     ingresarCadena(libros[i].autor, NUM_CARACTERES_AUTOR, 5, i);
     ingresarEntero(&libros[i].anio, 3, 3, i);
-    
+
     strcpy(libros[i].estado, "Disponible");
 }
 
 
+
+void mostrarLibros(struct Libro libros[NUM_LIBROS], int n)
+{
+    printf("%-4s%-100s%-50s%-6s%-11s\n", "ID", "TITULO", "AUTOR", "ANIO", "ESTADO");
+    for (int i = 0; i < n; i++)
+    {
+        printf("%-4d%-100s%-50s%-6d%-11s\n", libros[i].id, libros[i].titulo, libros[i].autor, libros[i].anio, libros[i].estado);
+    }
+}
+
+void buscarLibroId(struct Libro libros[NUM_LIBROS], int id)
+{
+    int existencia = verificarExistencia(libros, id, 3);
+    if (existencia==0)
+    {
+        printf("-NO SE ENCONTRARON RESULTADOS-\n");
+    }    
+}
+
 int verificarExistencia(struct Libro libros[NUM_LIBROS], int n, int numInfo)
 {
-    int acumExistencia = 0;
+    int acumExistencia = 0, buscado=0;
+    struct Libro libroEncontrado[20]={0};
+
 
     for (int i = 0; i < n + 1; i++)
     {
@@ -222,33 +245,47 @@ int verificarExistencia(struct Libro libros[NUM_LIBROS], int n, int numInfo)
                 acumExistencia++;
             }
             break;
-        /*case 3:
-            if (strcmp(libros[n].titulo, libros[i].autor) == 0)
+        case 3:
+                //printf("n=%d\ni=%d\nid copiado: %d\tid original: %d\n",n,i, libroEncontrado[0].id, libros[i].id);
+
+            if (n == libros[i].id)
             {
+                libroEncontrado[acumExistencia].id=libros[i].id;
+                strcpy(libroEncontrado[acumExistencia].titulo, libros[i].titulo);
+                strcpy(libroEncontrado[acumExistencia].autor, libros[i].autor);
+                libroEncontrado[acumExistencia].anio=libros[i].anio;
+                strcpy(libroEncontrado[acumExistencia].estado, libros[i].estado);
+
+                //printf("n=%d\ni=%d\nid copiado: %d\tid original: %d\n",n,i, libroEncontrado[0].id, libros[i].id);
                 acumExistencia++;
+                buscado=1;
             }
             break;
         case 4:
-            if (libros[n].anio == libros[i].anio)
+            if (strcmp(libros[n].titulo, libros[i].titulo) == 0)
             {
+                libroEncontrado[acumExistencia].id=libros[i].id;
+                strcpy(libroEncontrado[acumExistencia].titulo, libros[i].titulo);
+                strcpy(libroEncontrado[acumExistencia].autor, libros[i].autor);
+                libroEncontrado[acumExistencia].anio=libros[i].anio;
+                strcpy(libroEncontrado[acumExistencia].estado, libros[i].estado);
                 acumExistencia++;
+                buscado=1;
             }
-            break;*/
+            break;
 
         default:
             break;
         }
     }
-    return acumExistencia;
-}
-
-void mostrarLibros(struct Libro libros[NUM_LIBROS], int n)
-{
-    printf("%-4s%-100s%-50s%-6s%-11s\n", "ID", "TITULO", "AUTOR", "ANIO", "ESTADO");
-    for (int i = 0; i < n; i++)
+    //printf("\texistencia= %d\n", acumExistencia);
+    
+    if (acumExistencia>0 && buscado==1)
     {
-        printf("%-4d%-100s%-50s%-6d%-11s\n", libros[i].id, libros[i].titulo, libros[i].autor, libros[i].anio, libros[i].estado);
+        mostrarLibros(libroEncontrado, acumExistencia);
     }
+    
+    return acumExistencia;
 }
 
 void imprimirSeparadores()
