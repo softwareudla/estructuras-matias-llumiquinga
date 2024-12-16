@@ -25,7 +25,15 @@ int menu(struct Libro libros[NUM_LIBROS], int *i, int opc)
         break;
     case 2:
         imprimirSeparadores();
-        mostrarLibros(libros, *i);
+        if (*i == 0)
+        {
+            imprimirMensaje(28, 0);
+        }
+        else
+        {
+            imprimirMensaje(10, *i);
+            mostrarLibros(libros, *i);
+        }
         break;
     case 3:
         imprimirSeparadores();
@@ -187,8 +195,8 @@ void imprimirMensaje(int numMensaje, int i)
     case 1:
         printf("Ingrese:\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n>>\t", "1.Registrar libros",
                "2.Mostrar la lista de libros",
-               "3.Buscar un libro por titulo",
-               "4.Buscar un libro por id",
+               "3.Buscar un libro por id",
+               "4.Buscar un libro por titulo",
                "5.Actualizar el estado de un libro",
                "6.Eliminar libro",
                "7.Salir");
@@ -217,6 +225,9 @@ void imprimirMensaje(int numMensaje, int i)
     case 9:
         printf("Ingrese la id del libro a eliminar:\t");
         break;
+    case 10:
+        printf("-%d/%d LIBROS REGISTRADOS-\n", i, NUM_LIBROS);
+        break;
     case 21:
         printf("-NUMERO INVALIDO-\n");
         break;
@@ -237,6 +248,9 @@ void imprimirMensaje(int numMensaje, int i)
         break;
     case 27:
         printf("-YA SE HAN REGISTRADO EL MAX DE %d LIBROS-\n", NUM_LIBROS);
+        break;
+    case 28:
+        printf("-NO EXISTEN LIBROS REGISTRADOS-\n");
         break;
 
     default:
